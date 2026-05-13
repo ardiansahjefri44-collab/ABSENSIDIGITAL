@@ -1,32 +1,914 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SFMS Frontend</title>
-  <link rel="stylesheet" href="./assets/css/app.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SFMS Absensi Digital</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --card:#1f2937;
+      --line:#334155;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#10b981;
+      --primary-2:#059669;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --white:#fff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(135deg,#020617,#0f172a 45%,#111827);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+    }
+    .center{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .card{
+      width:100%;
+      max-width:460px;
+      background:rgba(17,24,39,.95);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:18px;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      padding:24px;
+    }
+    .title{
+      margin:0 0 6px;
+      font-size:28px;
+      font-weight:800;
+    }
+    .sub{
+      color:var(--muted);
+      margin:0 0 22px;
+      line-height:1.5;
+    }
+    .grid{display:grid;gap:14px}
+    label{
+      display:block;
+      margin-bottom:6px;
+      font-size:14px;
+      color:#cbd5e1;
+    }
+    input,select,button,textarea{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#0b1220;
+      color:var(--text);
+      padding:12px 14px;
+      font-size:14px;
+    }
+    textarea{min-height:110px;resize:vertical}
+    button{
+      cursor:pointer;
+      background:var(--primary);
+      border:none;
+      color:#052e16;
+      font-weight:700;
+    }
+    button:hover{background:var(--primary-2); color:#ecfdf5}
+    .secondary{
+      background:#1e293b;
+      color:#e2e8f0;
+      border:1px solid var(--line);
+    }
+    .danger{background:var(--danger); color:#fff}
+    .muted{color:var(--muted)}
+    .error,.success,.info{
+      padding:12px 14px;
+      border-radius:12px;
+      margin-bottom:14px;
+      font-size:14px;
+      line-height:1.5;
+    }
+    .error{background:rgba(239,68,68,.14); border:1px solid rgba(239,68,68,.3); color:#fecaca}
+    .success{background:rgba(16,185,129,.14); border:1px solid rgba(16,185,129,.3); color:#bbf7d0}
+    .info{background:rgba(59,130,246,.14); border:1px solid rgba(59,130,246,.3); color:#bfdbfe}
+    .shell{
+      display:grid;
+      grid-template-columns:260px 1fr;
+      min-height:100vh;
+    }
+    .sidebar{
+      background:rgba(2,6,23,.85);
+      border-right:1px solid rgba(148,163,184,.14);
+      padding:20px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
+    .brand{
+      font-size:22px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+    .brand-sub{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+      margin-bottom:18px;
+    }
+    .nav{
+      display:grid;
+      gap:8px;
+    }
+    .nav button{
+      text-align:left;
+      background:#0f172a;
+      color:#e2e8f0;
+      border:1px solid #243244;
+    }
+    .nav button.active{
+      background:var(--primary);
+      color:#052e16;
+      border:none;
+    }
+    .content{
+      padding:22px;
+    }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+    .panel{
+      background:rgba(17,24,39,.85);
+      border:1px solid rgba(148,163,184,.14);
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:16px;
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:14px;
+    }
+    .stat{
+      background:#0b1220;
+      border:1px solid #233246;
+      border-radius:16px;
+      padding:16px;
+    }
+    .stat h4{
+      margin:0 0 8px;
+      color:#cbd5e1;
+      font-size:14px;
+      font-weight:600;
+    }
+    .stat .num{
+      font-size:28px;
+      font-weight:800;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:14px;
+    }
+    th,td{
+      border-bottom:1px solid #243244;
+      padding:10px 8px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{color:#cbd5e1}
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .toolbar > *{
+      flex:1 1 180px;
+    }
+    .split{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .small{font-size:12px}
+    .hidden{display:none}
+    @media (max-width:900px){
+      .shell{grid-template-columns:1fr}
+      .sidebar{position:relative;height:auto}
+      .split{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-  <div id="app">Memuat aplikasi...</div>
+<div id="app" class="app">Memuat aplikasi...</div>
 
-  <script src="./assets/js/config.js"></script>
-  <script src="./assets/js/state.js"></script>
-  <script src="./assets/js/utils.js"></script>
-  <script src="./assets/js/api.js"></script>
-  <script src="./assets/js/auth.js"></script>
-  <script src="./assets/js/router.js"></script>
+<script>
+const CONFIG = {
+  GAS_URL: "YOUR_GAS_WEB_APP_URL"
+};
 
-  <script src="./assets/js/pages/dashboard.js"></script>
-  <script src="./assets/js/pages/students.js"></script>
-  <script src="./assets/js/pages/classes.js"></script>
-  <script src="./assets/js/pages/attendance.js"></script>
-  <script src="./assets/js/pages/scanner.js"></script>
-  <script src="./assets/js/pages/teachers.js"></script>
-  <script src="./assets/js/pages/reports.js"></script>
-  <script src="./assets/js/pages/promotion.js"></script>
-  <script src="./assets/js/pages/archives.js"></script>
-  <script src="./assets/js/pages/settings.js"></script>
+const state = {
+  route: "dashboard",
+  session: null,
+  db: {
+    schools: [],
+    classes: [],
+    students: [],
+    teachers: [],
+    subjects: [],
+    teacherSubjects: [],
+    attendance: [],
+    teacherAttendance: [],
+    settings: [],
+    studentArchives: [],
+    users: []
+  }
+};
 
-  <script src="./assets/js/main.js"></script>
+const $ = (s, p=document) => p.querySelector(s);
+const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
+const app = () => $("#app");
+
+function esc(v){
+  return String(v ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function todayStr(){
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - off * 60000);
+  return local.toISOString().slice(0,10);
+}
+function ymStr(){
+  return todayStr().slice(0,7);
+}
+function loadSession(){
+  try{
+    const raw = localStorage.getItem("sfms_session");
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){
+    return null;
+  }
+}
+function saveSession(s){
+  localStorage.setItem("sfms_session", JSON.stringify(s));
+}
+function clearSession(){
+  localStorage.removeItem("sfms_session");
+}
+function schoolName(id){
+  return (state.db.schools.find(x => String(x.id) === String(id)) || {}).name || "-";
+}
+function className(id){
+  return (state.db.classes.find(x => String(x.id) === String(id)) || {}).name || "-";
+}
+function roleLabel(role){
+  const map = {
+    superadmin: "Super Admin",
+    adminschool: "Admin Sekolah",
+    scanner: "Scanner"
+  };
+  return map[role] || role || "-";
+}
+function msgHtml(type, text){
+  if(!text) return "";
+  return `<div class="${type}">${esc(text)}</div>`;
+}
+
+const API = {
+  async post(action, payload = {}){
+    const res = await fetch(CONFIG.GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action, payload })
+    });
+
+    const text = await res.text();
+    let json;
+    try{
+      json = JSON.parse(text);
+    }catch(err){
+      throw new Error("Response bukan JSON valid: " + text);
+    }
+    if(!json.success){
+      throw new Error(json.message || "Request gagal");
+    }
+    return json;
+  },
+
+  login(username, password){
+    return this.post("login", { username, password });
+  },
+
+  bootstrap(session){
+    return this.post("bootstrap", { session });
+  },
+
+  getDashboardAnalytics(session, schoolid, month){
+    return this.post("getDashboardAnalytics", { session, schoolid, month });
+  },
+
+  getMonthlyReport(session, schoolid, month){
+    return this.post("getMonthlyReport", { session, schoolid, month });
+  },
+
+  seedInitialData(){
+    return this.post("seedInitialData", {});
+  }
+};
+
+const AUTH = {
+  async login(username, password){
+    const res = await API.login(username, password);
+    if(!res || !res.session){
+      throw new Error("Response login tidak memiliki session");
+    }
+    state.session = res.session;
+    saveSession(res.session);
+    return res.session;
+  },
+
+  async bootstrap(){
+    if(!state.session){
+      throw new Error("Session belum tersedia");
+    }
+    const res = await API.bootstrap(state.session);
+    state.db = {
+      schools: res.data?.schools || [],
+      classes: res.data?.classes || [],
+      students: res.data?.students || [],
+      teachers: res.data?.teachers || [],
+      subjects: res.data?.subjects || [],
+      teacherSubjects: res.data?.teacherSubjects || [],
+      attendance: res.data?.attendance || [],
+      teacherAttendance: res.data?.teacherAttendance || [],
+      settings: res.data?.settings || [],
+      studentArchives: res.data?.studentArchives || [],
+      users: res.data?.users || []
+    };
+    return state.db;
+  },
+
+  logout(){
+    clearSession();
+    state.session = null;
+    state.route = "dashboard";
+    state.db = {
+      schools: [],
+      classes: [],
+      students: [],
+      teachers: [],
+      subjects: [],
+      teacherSubjects: [],
+      attendance: [],
+      teacherAttendance: [],
+      settings: [],
+      studentArchives: [],
+      users: []
+    };
+  }
+};
+
+function navItems(){
+  const role = state.session?.role || "";
+  const items = [
+    ["dashboard","Dashboard"],
+    ["students","Siswa"],
+    ["classes","Kelas"],
+    ["teachers","Guru & Mapel"],
+    ["attendance","Absensi"],
+    ["reports","Laporan"],
+    ["settings","Pengaturan"]
+  ];
+  if(role === "scanner"){
+    return [
+      ["dashboard","Dashboard"],
+      ["attendance","Absensi"],
+      ["reports","Laporan"]
+    ];
+  }
+  return items;
+}
+
+function renderLogin(message="", type="info"){
+  app().innerHTML = `
+    <div class="center">
+      <div class="card">
+        <h1 class="title">SFMS Login</h1>
+        <p class="sub">Masuk ke sistem absensi digital yang terhubung ke Google Apps Script.</p>
+        ${message ? msgHtml(type, message) : ""}
+        <form id="loginForm" class="grid">
+          <div>
+            <label>Username</label>
+            <input id="username" autocomplete="username" placeholder="contoh: superadmin" />
+          </div>
+          <div>
+            <label>Password</label>
+            <input id="password" type="password" autocomplete="current-password" placeholder="contoh: 123456" />
+          </div>
+          <button type="submit">Masuk</button>
+          <button type="button" id="seedBtn" class="secondary">Buat Data Awal</button>
+          <div class="info small">
+            Akun awal backend: superadmin/123456, adminmi/123456, scanmi/123456, adminmts/123456, scanmts/123456.
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+
+  $("#loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = $("#username").value.trim();
+    const password = $("#password").value.trim();
+
+    if(!username || !password){
+      renderLogin("Username dan password wajib diisi.", "error");
+      return;
+    }
+
+    try{
+      renderLogin("Sedang login...", "info");
+      await AUTH.login(username, password);
+      await AUTH.bootstrap();
+      renderShell();
+    }catch(err){
+      renderLogin(err.message || String(err), "error");
+    }
+  });
+
+  $("#seedBtn").addEventListener("click", async () => {
+    try{
+      renderLogin("Sedang membuat data awal...", "info");
+      const res = await API.seedInitialData();
+      renderLogin(res.message || "Seed berhasil.", "success");
+    }catch(err){
+      renderLogin(err.message || String(err), "error");
+    }
+  });
+}
+
+function shellLayout(contentHtml){
+  const s = state.session;
+  const nav = navItems().map(([key,label]) => `
+    <button class="${state.route===key ? "active" : ""}" data-route="${key}">${esc(label)}</button>
+  `).join("");
+
+  return `
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">SFMS</div>
+        <div class="brand-sub">Smart Foundation Management System</div>
+
+        <div class="panel" style="padding:14px">
+          <div><strong>${esc(s?.name || "-")}</strong></div>
+          <div class="muted">${esc(roleLabel(s?.role))}</div>
+          <div class="muted">${esc(s?.schoolid || "all")}</div>
+        </div>
+
+        <div class="nav" id="sideNav">${nav}</div>
+
+        <div style="margin-top:12px">
+          <button id="logoutBtn" class="danger">Keluar</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        ${contentHtml}
+      </main>
+    </div>
+  `;
+}
+
+function renderShell(){
+  if(!state.session){
+    renderLogin("Session tidak ditemukan.", "error");
+    return;
+  }
+
+  let page = "";
+  if(state.route === "dashboard") page = pageDashboard();
+  else if(state.route === "students") page = pageStudents();
+  else if(state.route === "classes") page = pageClasses();
+  else if(state.route === "teachers") page = pageTeachers();
+  else if(state.route === "attendance") page = pageAttendance();
+  else if(state.route === "reports") page = pageReports();
+  else if(state.route === "settings") page = pageSettings();
+  else page = pageDashboard();
+
+  app().innerHTML = shellLayout(page);
+
+  $$("#sideNav [data-route]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.route = btn.dataset.route;
+      renderShell();
+    });
+  });
+
+  $("#logoutBtn").addEventListener("click", () => {
+    AUTH.logout();
+    renderLogin("Anda telah logout.", "success");
+  });
+
+  bindPageEvents();
+}
+
+function pageDashboard(){
+  return `
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">Dashboard</h2>
+        <div class="muted">Ringkasan data yang sudah dibootstrap dari backend.</div>
+      </div>
+      <div>
+        <button id="refreshBtn" class="secondary">Refresh Data</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><h4>Sekolah</h4><div class="num">${state.db.schools.length}</div></div>
+      <div class="stat"><h4>Kelas</h4><div class="num">${state.db.classes.length}</div></div>
+      <div class="stat"><h4>Siswa</h4><div class="num">${state.db.students.length}</div></div>
+      <div class="stat"><h4>Guru</h4><div class="num">${state.db.teachers.length}</div></div>
+      <div class="stat"><h4>User</h4><div class="num">${state.db.users.length}</div></div>
+      <div class="stat"><h4>Arsip</h4><div class="num">${state.db.studentArchives.length}</div></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Info session</h3>
+      <table>
+        <tr><th>Nama</th><td>${esc(state.session?.name || "-")}</td></tr>
+        <tr><th>Username</th><td>${esc(state.session?.username || "-")}</td></tr>
+        <tr><th>Role</th><td>${esc(roleLabel(state.session?.role))}</td></tr>
+        <tr><th>Sekolah</th><td>${esc(state.session?.schoolid || "all")}</td></tr>
+        <tr><th>Login At</th><td>${esc(state.session?.loginat || "-")}</td></tr>
+      </table>
+    </div>
+
+    <div class="split">
+      <div class="panel">
+        <h3 style="margin-top:0">Sekolah</h3>
+        <table>
+          <thead><tr><th>Nama</th><th>Level</th><th>Alamat</th></tr></thead>
+          <tbody>
+            ${state.db.schools.map(s => `
+              <tr>
+                <td>${esc(s.name)}</td>
+                <td>${esc(s.level)}</td>
+                <td>${esc(s.address)}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="3" class="muted">Belum ada data.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0">User</h3>
+        <table>
+          <thead><tr><th>Nama</th><th>Username</th><th>Role</th></tr></thead>
+          <tbody>
+            ${state.db.users.map(u => `
+              <tr>
+                <td>${esc(u.name)}</td>
+                <td>${esc(u.username)}</td>
+                <td>${esc(roleLabel(u.role))}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="3" class="muted">Belum ada data.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function pageStudents(){
+  return `
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">Siswa</h2>
+        <div class="muted">Data siswa hasil bootstrap.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="toolbar">
+        <input id="studentSearch" placeholder="Cari nama siswa / NIS" />
+      </div>
+      <div id="studentsTableWrap">${studentsTable(state.db.students)}</div>
+    </div>
+  `;
+}
+
+function studentsTable(rows){
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>NIS</th>
+          <th>Gender</th>
+          <th>Kelas</th>
+          <th>Sekolah</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(s => `
+          <tr>
+            <td>${esc(s.fullname)}</td>
+            <td>${esc(s.nis)}</td>
+            <td>${esc(s.gender)}</td>
+            <td>${esc(className(s.classid))}</td>
+            <td>${esc(schoolName(s.schoolid))}</td>
+          </tr>
+        `).join("") || `<tr><td colspan="5" class="muted">Belum ada data.</td></tr>`}
+      </tbody>
+    </table>
+  `;
+}
+
+function pageClasses(){
+  return `
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">Kelas</h2>
+        <div class="muted">Daftar kelas yang tersedia.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Lokasi</th>
+            <th>Sekolah</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${state.db.classes.map(c => `
+            <tr>
+              <td>${esc(c.name)}</td>
+              <td>${esc(c.location)}</td>
+              <td>${esc(schoolName(c.schoolid))}</td>
+            </tr>
+          `).join("") || `<tr><td colspan="3" class="muted">Belum ada data.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function pageTeachers(){
+  return `
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">Guru & Mapel</h2>
+        <div class="muted">Daftar guru dan subject dari backend.</div>
+      </div>
+    </div>
+    <div class="split">
+      <div class="panel">
+        <h3 style="margin-top:0">Guru</h3>
+        <table>
+          <thead><tr><th>Nama</th><th>NIP</th><th>Sekolah</th></tr></thead>
+          <tbody>
+            ${state.db.teachers.map(t => `
+              <tr>
+                <td>${esc(t.name)}</td>
+                <td>${esc(t.nip)}</td>
+                <td>${esc(schoolName(t.schoolid))}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="3" class="muted">Belum ada data.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Mapel</h3>
+        <table>
+          <thead><tr><th>Nama</th><th>Kode</th><th>Sekolah</th></tr></thead>
+          <tbody>
+            ${state.db.subjects.map(s => `
+              <tr>
+                <td>${esc(s.name)}</td>
+                <td>${esc(s.code)}</td>
+                <td>${esc(schoolName(s.schoolid))}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="3" class="muted">Belum ada data.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function pageAttendance(){
+  return `
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">Absensi</h2>
+        <div class="muted">Menampilkan data attendance terakhir dari bootstrap.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Sesi</th>
+            <th>NIS</th>
+            <th>Status</th>
+            <th>Kelas</th>
+            <th>Sekolah</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${state.db.attendance.slice().reverse().slice(0,200).map(a => `
+            <tr>
+              <td>${esc(a.date)}</td>
+              <td>${esc(a.sessionno)}</td>
+              <td>${esc(a.nis)}</td>
+              <td>${esc(a.status)}</td>
+              <td>${esc(className(a.classid))}</td>
+              <td>${esc(schoolName(a.schoolid))}</td>
+            </tr>
+          `).join("") || `<tr><td colspan="6" class="muted">Belum ada data absensi.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function pageReports(){
+  return `
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">Laporan Bulanan</h2>
+        <div class="muted">Mengambil analytics dan laporan bulanan langsung dari GAS.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <input id="reportMonth" type="month" value="${esc(ymStr())}" />
+        <select id="reportSchool">
+          <option value="">Sekolah sesuai session</option>
+          <option value="all">Semua sekolah</option>
+          ${state.db.schools.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("")}
+        </select>
+        <button id="loadReportsBtn">Muat Laporan</button>
+      </div>
+      <div id="reportResult" class="muted">Belum dimuat.</div>
+    </div>
+  `;
+}
+
+function pageSettings(){
+  return `
+    <div class="topbar">
+      <div>
+        <h2 style="margin:0">Pengaturan</h2>
+        <div class="muted">Informasi koneksi dan data lokal aplikasi.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <tr><th>GAS URL</th><td>${esc(CONFIG.GAS_URL)}</td></tr>
+        <tr><th>Session aktif</th><td>${state.session ? "Ya" : "Tidak"}</td></tr>
+        <tr><th>Route</th><td>${esc(state.route)}</td></tr>
+        <tr><th>Jumlah schools</th><td>${state.db.schools.length}</td></tr>
+        <tr><th>Jumlah students</th><td>${state.db.students.length}</td></tr>
+      </table>
+    </div>
+  `;
+}
+
+function bindPageEvents(){
+  const refreshBtn = $("#refreshBtn");
+  if(refreshBtn){
+    refreshBtn.addEventListener("click", async () => {
+      try{
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = "Memuat...";
+        await AUTH.bootstrap();
+        renderShell();
+      }catch(err){
+        alert(err.message || String(err));
+      }
+    });
+  }
+
+  const studentSearch = $("#studentSearch");
+  if(studentSearch){
+    studentSearch.addEventListener("input", () => {
+      const q = studentSearch.value.trim().toLowerCase();
+      const rows = state.db.students.filter(s =>
+        String(s.fullname || "").toLowerCase().includes(q) ||
+        String(s.nis || "").toLowerCase().includes(q)
+      );
+      $("#studentsTableWrap").innerHTML = studentsTable(rows);
+    });
+  }
+
+  const loadReportsBtn = $("#loadReportsBtn");
+  if(loadReportsBtn){
+    loadReportsBtn.addEventListener("click", async () => {
+      const month = $("#reportMonth").value;
+      const schoolid = $("#reportSchool").value;
+      const wrap = $("#reportResult");
+
+      try{
+        wrap.innerHTML = `<div class="info">Memuat laporan...</div>`;
+
+        const [analytics, monthly] = await Promise.all([
+          API.getDashboardAnalytics(state.session, schoolid, month),
+          API.getMonthlyReport(state.session, schoolid, month)
+        ]);
+
+        const s = analytics.data?.summary || {};
+        const classes = monthly.data?.classes || [];
+
+        wrap.innerHTML = `
+          <div class="stats" style="margin-bottom:14px">
+            <div class="stat"><h4>Siswa</h4><div class="num">${Number(s.students || 0)}</div></div>
+            <div class="stat"><h4>Record</h4><div class="num">${Number(s.attendanceRecords || 0)}</div></div>
+            <div class="stat"><h4>Present Rate</h4><div class="num">${Number(s.presentRate || 0)}%</div></div>
+            <div class="stat"><h4>Alpha</h4><div class="num">${Number(s.alphaCount || 0)}</div></div>
+          </div>
+
+          <div class="panel" style="padding:0;border:none;background:transparent">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kelas</th>
+                  <th>Sekolah</th>
+                  <th>Hadir</th>
+                  <th>Sakit</th>
+                  <th>Izin</th>
+                  <th>Alpha</th>
+                  <th>Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${classes.map(c => `
+                  <tr>
+                    <td>${esc(c.classname)}</td>
+                    <td>${esc(c.schoolname)}</td>
+                    <td>${Number(c.summary?.hadir || 0)}</td>
+                    <td>${Number(c.summary?.sakit || 0)}</td>
+                    <td>${Number(c.summary?.izin || 0)}</td>
+                    <td>${Number(c.summary?.alpha || 0)}</td>
+                    <td>${Number(c.summary?.presentRate || 0)}%</td>
+                  </tr>
+                `).join("") || `<tr><td colspan="7" class="muted">Tidak ada data laporan.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }catch(err){
+        wrap.innerHTML = `<div class="error">${esc(err.message || String(err))}</div>`;
+      }
+    });
+  }
+}
+
+async function start(){
+  if(!CONFIG.GAS_URL || CONFIG.GAS_URL === "https://script.google.com/macros/s/AKfycbxYFLfh0TXg6kuQYxFwDPaa5ZcC-MH7POur_DhxrNC15_dxh0_5uYZHRE6PpwH5nuce/exec"){
+    renderLogin("Ganti CONFIG.GAS_URL dulu dengan URL Web App GAS Anda.", "error");
+    return;
+  }
+
+  const session = loadSession();
+  if(session){
+    try{
+      state.session = session;
+      await AUTH.bootstrap();
+      renderShell();
+      return;
+    }catch(err){
+      AUTH.logout();
+      renderLogin("Session lama tidak valid. Silakan login lagi.", "error");
+      return;
+    }
+  }
+
+  renderLogin();
+}
+
+start();
+</script>
 </body>
 </html>
