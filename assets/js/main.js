@@ -36,55 +36,60 @@
   }
 
   function renderShell() {
-    const s = state.session;
+  const s = state.session;
 
-    root().innerHTML = `
-      <div class="shell">
-        <aside class="sidebar">
-          <div class="brand">SFMS</div>
-          <div class="brand-sub">Smart Foundation Management System</div>
-
-          <div style="margin-bottom:18px;">
-            <div><strong>${u.escapeHtml(s.name)}</strong></div>
-            <div class="muted" style="color:#cbd5e1;">${u.escapeHtml(s.role)}</div>
-            <div class="muted" style="color:#cbd5e1;">${u.escapeHtml(s.schoolid || "all")}</div>
-          </div>
-
-          <div class="nav" id="sideNav">
-            ${navButton("dashboard", "Dashboard")}
-            ${navButton("students", "Siswa")}
-            ${navButton("classes", "Kelas")}
-            ${navButton("attendance", "Absensi Siswa")}
-            ${navButton("scanner", "Scanner")}
-            ${navButton("teachers", "Guru & Mapel")}
-            ${navButton("reports", "Laporan")}
-            ${navButton("promotion", "Promosi")}
-            ${navButton("archives", "Arsip")}
-            ${navButton("settings", "Pengaturan")}
-            <button id="logoutBtn" class="secondary">Keluar</button>
-          </div>
-        </aside>
-
-        <main class="content">
-          <div id="page"></div>
-        </main>
-      </div>
-    `;
-
-    u.qsa("[data-route]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        router.setRoute(btn.dataset.route);
-        renderShell();
-      });
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      auth.logout();
-      renderLogin();
-    });
-
-    router.render();
+  if (!s) {
+    renderLogin("Session tidak ditemukan");
+    return;
   }
+
+  root().innerHTML = `
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">SFMS</div>
+        <div class="brand-sub">Smart Foundation Management System</div>
+
+        <div style="margin-bottom:18px;">
+          <div><strong>${u.escapeHtml(s.name || "-")}</strong></div>
+          <div class="muted" style="color:#cbd5e1;">${u.escapeHtml(s.role || "-")}</div>
+          <div class="muted" style="color:#cbd5e1;">${u.escapeHtml(s.schoolid || "all")}</div>
+        </div>
+
+        <div class="nav" id="sideNav">
+          ${navButton("dashboard", "Dashboard")}
+          ${navButton("students", "Siswa")}
+          ${navButton("classes", "Kelas")}
+          ${navButton("attendance", "Absensi Siswa")}
+          ${navButton("scanner", "Scanner")}
+          ${navButton("teachers", "Guru & Mapel")}
+          ${navButton("reports", "Laporan")}
+          ${navButton("promotion", "Promosi")}
+          ${navButton("archives", "Arsip")}
+          ${navButton("settings", "Pengaturan")}
+          <button id="logoutBtn" class="secondary">Keluar</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <div id="page"></div>
+      </main>
+    </div>
+  `;
+
+  u.qsa("[data-route]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      router.setRoute(btn.dataset.route);
+      renderShell();
+    });
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    auth.logout();
+    renderLogin();
+  });
+
+  router.render();
+}
 
   async function onLoginSubmit(event) {
     event.preventDefault();
